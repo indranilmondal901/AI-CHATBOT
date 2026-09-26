@@ -1,0 +1,3 @@
+https://www.geeksforgeeks.org/nlp/what-is-retrieval-augmented-generation-rag/
+
+https://www.geeksforgeeks.org/artificial-intelligence/text-splitter-in-langchain/
