@@ -1,0 +1,33 @@
+
+[
+  {
+    "question": "What technologies does Budhana Tech use?",
+    "expected_answer": "The technologies listed in the approved company documents.",
+    "expected_keywords": ["React", "Node.js"],
+    "should_refuse": false
+  },
+  {
+    "question": "What services does Budhana Tech provide?",
+    "expected_answer": "The services documented in the approved company documents.",
+    "expected_keywords": ["software development"],
+    "should_refuse": false
+  },
+  {
+    "question": "What is the developer staffing model?",
+    "expected_answer": "The staffing model described in the approved company documents.",
+    "expected_keywords": ["developers"],
+    "should_refuse": false
+  },
+  {
+    "question": "What is Budhana Tech's revenue forecast for 2030?",
+    "expected_answer": "The knowledge base does not contain this information.",
+    "expected_keywords": [],
+    "should_refuse": true
+  },
+  {
+    "question": "What is the company's policy on a topic not covered in the documents?",
+    "expected_answer": "The knowledge base does not contain this information.",
+    "expected_keywords": [],
+    "should_refuse": true
+  }
+]

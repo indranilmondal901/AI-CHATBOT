@@ -4,3 +4,7 @@ chromadb
 langchain-chroma
 langchain_huggingface
 langchain_ollama
+langsmith 
+python-dotenv
+streamlit
+fastapi
