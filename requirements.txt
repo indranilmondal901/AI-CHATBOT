@@ -8,3 +8,7 @@ langsmith
 python-dotenv
 streamlit
 fastapi
+pymupdf
+pydantic
+langchain_ollama
+langchain-google-genai
