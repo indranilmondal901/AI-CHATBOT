@@ -1,3 +1,4 @@
 chatbot
 .env
-frontend
+frontend/node_modules
+frontend/build
