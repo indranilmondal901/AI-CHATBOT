@@ -556,10 +556,10 @@ class ChatRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
 
 
-llm = ChatOllama(
-    model="llama3.2:3b",
-    temperature=0,
-)
+# llm = ChatOllama(
+#     model="llama3.2:3b",
+#     temperature=0,
+# )
 
 
 @app.post("/api/chat")

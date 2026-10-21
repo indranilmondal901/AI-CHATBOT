@@ -1,1 +1,65 @@
-{}
+{
+  "doc_b3920f1004df427c8276e9c9c65948a4": {
+    "document_id": "doc_b3920f1004df427c8276e9c9c65948a4",
+    "filename": "Document.pdf",
+    "file_type": "pdf",
+    "status": "ready",
+    "current_step": "ready",
+    "uploaded_at": "2026-10-16T09:21:19.572504+00:00",
+    "completed_at": "2026-10-16T09:21:27.759724+00:00",
+    "chunks_count": 7,
+    "error": null,
+    "stages": {
+      "upload_done": true,
+      "chunking_done": true,
+      "vectorization_done": true,
+      "saved_to_chromadb": true
+    },
+    "upload_path": "data\\uploads\\doc_b3920f1004df427c8276e9c9c65948a4.pdf",
+    "chunking_done": true,
+    "vectorization_done": true,
+    "saved_to_chromadb": true
+  },
+  "doc_eff15a1f0e804cabb48afb3c1b661c19": {
+    "document_id": "doc_eff15a1f0e804cabb48afb3c1b661c19",
+    "filename": "Document (1).pdf",
+    "file_type": "pdf",
+    "status": "ready",
+    "current_step": "ready",
+    "uploaded_at": "2026-10-16T09:21:31.370895+00:00",
+    "completed_at": "2026-10-16T09:21:31.622626+00:00",
+    "chunks_count": 5,
+    "error": null,
+    "stages": {
+      "upload_done": true,
+      "chunking_done": true,
+      "vectorization_done": true,
+      "saved_to_chromadb": true
+    },
+    "upload_path": "data\\uploads\\doc_eff15a1f0e804cabb48afb3c1b661c19.pdf",
+    "chunking_done": true,
+    "vectorization_done": true,
+    "saved_to_chromadb": true
+  },
+  "doc_4d301826419d4e77bea60a1b78c988bd": {
+    "document_id": "doc_4d301826419d4e77bea60a1b78c988bd",
+    "filename": "Document (2).pdf",
+    "file_type": "pdf",
+    "status": "ready",
+    "current_step": "ready",
+    "uploaded_at": "2026-10-16T09:21:39.574885+00:00",
+    "completed_at": "2026-10-16T09:21:39.836997+00:00",
+    "chunks_count": 7,
+    "error": null,
+    "stages": {
+      "upload_done": true,
+      "chunking_done": true,
+      "vectorization_done": true,
+      "saved_to_chromadb": true
+    },
+    "upload_path": "data\\uploads\\doc_4d301826419d4e77bea60a1b78c988bd.pdf",
+    "chunking_done": true,
+    "vectorization_done": true,
+    "saved_to_chromadb": true
+  }
+}
