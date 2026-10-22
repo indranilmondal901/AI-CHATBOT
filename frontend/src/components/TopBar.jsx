@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Activity, Bot, Database } from "lucide-react";
 import { getLangSmithStatus } from "../services/api";
 
-export default function TopBar({ apiOnline, onMonitoring }) {
+export default function TopBar({ apiOnline, onMonitoring, StartRagasEvalution }) {
   const [langSmith, setLangSmith] = useState({
     status: "checking",
     message: "Checking LangSmith connection...",
@@ -103,6 +103,16 @@ export default function TopBar({ apiOnline, onMonitoring }) {
           className="database-icon"
           title="ChromaDB knowledge base"
         />
+
+        <button
+          type="button"
+          className="monitoring-nav-button"
+          onClick={StartRagasEvalution}
+          title="Open LangSmith monitoring"
+        >
+          <Activity size={17} />
+          <span>RAGAS</span>
+        </button>
 
         <button
           type="button"

@@ -1,11 +1,6 @@
+
 """
 Evaluate the Budhana Tech RAG chatbot using RAGAS.
-
-Expected ask_document() output:
-{
-    "answer": "Generated answer...",
-    "context": ["Retrieved chunk 1...", "Retrieved chunk 2..."]
-}
 """
 
 import json
@@ -13,6 +8,7 @@ import os
 import sys
 from pathlib import Path
 
+import pandas as pd
 from dotenv import load_dotenv
 from datasets import Dataset
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -26,13 +22,15 @@ from ragas.metrics import (
     context_recall,
     faithfulness,
 )
+from langchain_ollama import ChatOllama
+from ragas.llms import LangchainLLMWrapper
 
 # --------------------------------------------------
-# 1. Resolve project paths and load environment
+# 1. Paths and environment
 # --------------------------------------------------
 
-# Project root: AI-CHATBOT/
 BASE_DIR = Path(__file__).resolve().parent.parent
+EVALUATION_DIR = Path(__file__).resolve().parent
 
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
@@ -41,35 +39,43 @@ load_dotenv(BASE_DIR / ".env")
 
 from src.rag import ask_document
 
-dataset_path = Path(__file__).resolve().parent / "test_dataset.json"
+DATASET_PATH = EVALUATION_DIR / "test_dataset.json"
 
-with dataset_path.open("r", encoding="utf-8") as file:
+# IMPORTANT: Use this same filename in your FastAPI endpoint.
+OUTPUT_PATH = BASE_DIR / "ragas_results.csv"
+
+with DATASET_PATH.open("r", encoding="utf-8") as file:
     test_cases = json.load(file)
 
 if not test_cases:
     raise ValueError("The evaluation dataset is empty.")
 
-# --------------------------------------------------
-# 2. Configure evaluation models
-# --------------------------------------------------
-
 if not os.getenv("GOOGLE_API_KEY"):
     raise EnvironmentError(
-        "GOOGLE_API_KEY is missing. Add it to your .env file."
+        "GOOGLE_API_KEY is missing from your .env file."
     )
 
-# Gemini evaluates the chatbot's answers.
+# --------------------------------------------------
+# 2. Configure evaluator
+# --------------------------------------------------
+
 evaluator_llm = LangchainLLMWrapper(
     ChatGoogleGenerativeAI(
         model=os.getenv(
             "RAGAS_EVALUATOR_MODEL",
-            "gemini-2.5-flash",
+            "gemini-3.8-flash",
         ),
         temperature=0,
     )
 )
 
-# Embeddings are used by RAGAS metrics.
+# evaluator_llm = LangchainLLMWrapper(
+#     ChatOllama(
+#         model="deepseek-r1:7b",
+#         temperature=0,
+#     )
+# )
+
 evaluator_embeddings = LangchainEmbeddingsWrapper(
     HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
@@ -77,19 +83,50 @@ evaluator_embeddings = LangchainEmbeddingsWrapper(
 )
 
 # --------------------------------------------------
-# 3. Normalize chatbot output
+# 3. Normalize answer and context
 # --------------------------------------------------
 
-def get_answer_and_context(result):
-    """Extract the generated answer and retrieved text chunks."""
+def normalize_text(value):
+    """Convert strings, message objects, and text lists to plain text."""
 
+    if value is None:
+        return ""
+
+    if isinstance(value, str):
+        return value.strip()
+
+    if isinstance(value, dict):
+        if value.get("text"):
+            return normalize_text(value["text"])
+
+        if value.get("content"):
+            return normalize_text(value["content"])
+
+        if value.get("page_content"):
+            return normalize_text(value["page_content"])
+
+        return ""
+
+    if isinstance(value, (list, tuple)):
+        parts = [normalize_text(item) for item in value]
+        return "\n".join(part for part in parts if part).strip()
+
+    if hasattr(value, "content"):
+        return normalize_text(value.content)
+
+    if hasattr(value, "page_content"):
+        return normalize_text(value.page_content)
+
+    return str(value).strip()
+
+
+def get_answer_and_context(result):
     if not isinstance(result, dict):
         raise TypeError(
-            "ask_document() must return a dictionary containing "
-            "'answer' and retrieved contexts."
+            "ask_document() must return a dictionary."
         )
 
-    answer = (
+    answer = normalize_text(
         result.get("answer")
         or result.get("response")
         or result.get("result")
@@ -103,55 +140,36 @@ def get_answer_and_context(result):
         or []
     )
 
-    if isinstance(contexts, str):
+    if not isinstance(contexts, (list, tuple)):
         contexts = [contexts]
 
-    normalized_contexts = []
+    normalized_contexts = [
+        normalize_text(item)
+        for item in contexts
+    ]
 
-    for item in contexts:
-        if isinstance(item, str):
-            if item.strip():
-                normalized_contexts.append(item)
-
-        elif hasattr(item, "page_content"):
-            if item.page_content and item.page_content.strip():
-                normalized_contexts.append(item.page_content)
-
-        elif isinstance(item, dict):
-            content = item.get("page_content") or item.get("text")
-            if content and content.strip():
-                normalized_contexts.append(content)
-
-    if hasattr(answer, "content"):
-        answer = answer.content
+    normalized_contexts = [
+        item for item in normalized_contexts if item
+    ]
 
     return answer, normalized_contexts
 
 
 # --------------------------------------------------
-# 4. Run chatbot and collect evaluation records
+# 4. Collect chatbot responses
 # --------------------------------------------------
 
 records = []
 
 for index, test in enumerate(test_cases, start=1):
-    question = test["question"]
-    expected_answer = test.get("expected_answer", "").strip()
+    question = test.get("question", "").strip()
+    expected_answer = normalize_text(
+        test.get("expected_answer")
+    )
 
-    # No document_id: search across the available documents.
-    result = ask_document(question=question)
-
-    answer, contexts = get_answer_and_context(result)
-
-    if not answer:
+    if not question:
         raise ValueError(
-            f"Test case {index}: the RAG chatbot returned no answer."
-        )
-
-    if not contexts:
-        raise ValueError(
-            f"Test case {index}: no retrieved context was returned. "
-            "Check ChromaDB, ingestion, and ask_document()."
+            f"Test case {index} has no question."
         )
 
     if (
@@ -160,33 +178,46 @@ for index, test in enumerate(test_cases, start=1):
         or expected_answer.startswith("Replace this")
     ):
         raise ValueError(
-            f"Test case {index}: replace expected_answer with a "
-            "verified reference answer from your approved documents."
+            f"Test case {index} needs a verified expected_answer."
         )
 
-    records.append(
-        {
-            "user_input": question,
-            "retrieved_contexts": contexts,
-            "response": str(answer),
-            "reference": expected_answer,
-        }
+    # Search the currently indexed knowledge base.
+    result = ask_document(question=question)
+
+    answer, contexts = get_answer_and_context(result)
+
+    if not answer:
+        raise ValueError(
+            f"Test case {index}: chatbot returned no answer."
+        )
+
+    if not contexts:
+        raise ValueError(
+            f"Test case {index}: no retrieved contexts returned."
+        )
+
+    records.append({
+        "user_input": question,
+        "retrieved_contexts": contexts,
+        "response": answer,
+        "reference": expected_answer,
+    })
+
+    print(
+        f"Collected case {index}/{len(test_cases)}"
     )
 
-    print(f"Collected evaluation case {index}/{len(test_cases)}")
-
-
 # --------------------------------------------------
-# 5. Create RAGAS dataset
+# 5. Create evaluation dataset
 # --------------------------------------------------
 
 evaluation_dataset = Dataset.from_list(records)
 
 # --------------------------------------------------
-# 6. Evaluate RAG quality
+# 6. Run RAGAS evaluation
 # --------------------------------------------------
 
-metrics = [
+ragas_metrics = [
     faithfulness,
     answer_relevancy,
     context_precision,
@@ -194,23 +225,63 @@ metrics = [
 ]
 
 print("\nRunning RAGAS evaluation...")
+print("Evaluation errors will be raised instead of silently ignored.")
 
 results = evaluate(
     dataset=evaluation_dataset,
-    metrics=metrics,
+    metrics=ragas_metrics,
     llm=evaluator_llm,
     embeddings=evaluator_embeddings,
+    raise_exceptions=True,
 )
 
 # --------------------------------------------------
-# 7. Save and display results
+# 7. Validate and save results
 # --------------------------------------------------
 
 scores = results.to_pandas()
 
-output_path = BASE_DIR / "ragas_results.csv"
-scores.to_csv(output_path, index=False)
+metric_columns = [
+    "faithfulness",
+    "answer_relevancy",
+    "context_precision",
+    "context_recall",
+]
 
-print("\nEvaluation completed.")
+missing_columns = [
+    column for column in metric_columns
+    if column not in scores.columns
+]
+
+if missing_columns:
+    raise RuntimeError(
+        f"RAGAS did not return expected metric columns: "
+        f"{missing_columns}. Returned columns: "
+        f"{scores.columns.tolist()}"
+    )
+
+# Ensure metric values are numeric.
+for column in metric_columns:
+    scores[column] = pd.to_numeric(
+        scores[column], errors="coerce"
+    )
+
+# Save the detailed evaluation results.
+scores.to_csv(OUTPUT_PATH, index=False)
+
+print("\nEvaluation results:")
 print(scores.to_string(index=False))
-print(f"\nDetailed scores saved to: {output_path}")
+
+print(f"\nSaved results to: {OUTPUT_PATH}")
+
+print("\nMetric summary:")
+print(scores[metric_columns].mean().to_string())
+
+if scores[metric_columns].notna().sum().sum() == 0:
+    raise RuntimeError(
+        "RAGAS returned no numeric metric scores. "
+        "Check the evaluation error above, your RAGAS version, "
+        "Gemini configuration, and evaluator logs."
+    )
+
+print("\nRAGAS evaluation completed.")

@@ -22,6 +22,10 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+import csv
+import math
+from statistics import mean
+
 
 # --------------------------------------------------
 # 1. Configuration
@@ -1193,3 +1197,86 @@ def langsmith_run_detail(run_id: str):
             status_code=502,
             detail="Unable to retrieve this run. Verify the run ID and LangSmith permissions.",
         ) from exc
+
+    # --------------------------------------------------
+# RAGAS evaluation metrics for the React dashboard
+# --------------------------------------------------
+
+RAGAS_RESULTS_FILE = PROJECT_ROOT / "ragas_results.csv"
+print(RAGAS_RESULTS_FILE)
+
+RAGAS_METRICS = [
+    "faithfulness",
+    "answer_relevancy",
+    "context_precision",
+    "context_recall",
+]
+
+
+@app.get("/api/analytics/ragas")
+def get_ragas_metrics():
+    """Return average RAGAS scores for dashboard charts."""
+
+    if not RAGAS_RESULTS_FILE.exists():
+        return {
+            "status": "not_available",
+            "message": (
+                "RAGAS results not found. "
+                "Run evaluation/run_evaluation.py first."
+            ),
+            "sample_size": 0,
+            "metrics": [],
+        }
+
+    try:
+        with open(
+            RAGAS_RESULTS_FILE,
+            "r",
+            encoding="utf-8-sig",
+            newline="",
+        ) as file:
+            rows = list(csv.DictReader(file))
+
+        if not rows:
+            return {
+                "status": "not_available",
+                "message": "The RAGAS results file is empty.",
+                "sample_size": 0,
+                "metrics": [],
+            }
+
+        metrics = []
+
+        for metric_name in RAGAS_METRICS:
+            values = []
+
+            for row in rows:
+                raw_value = row.get(metric_name)
+
+                try:
+                    score = float(raw_value)
+                except (TypeError, ValueError):
+                    continue
+
+                if math.isfinite(score):
+                    values.append(score)
+
+            metrics.append({
+                "name": metric_name.replace("_", " ").title(),
+                "key": metric_name,
+                "score": round(mean(values), 4) if values else None,
+                "evaluated_cases": len(values),
+            })
+
+        return {
+            "status": "success",
+            "sample_size": len(rows),
+            "metrics": metrics,
+        }
+
+    except (OSError, csv.Error):
+        logging.exception("Could not read RAGAS results")
+        raise HTTPException(
+            status_code=500,
+            detail="Could not read the RAGAS results file.",
+        )

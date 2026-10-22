@@ -1,18 +1,94 @@
 [
   {
-    "question": "What services does Budhana Tech provide?",
-    "expected_answer": "Budhana Tech specializes in web application development, mobile application development, and advanced AI-based solutions."
+    "question": "What happens if a new hire voluntarily resigns within 20 days of joining?",
+    "expected_answer": "A new hire who voluntarily resigns within 20 days of joining is not eligible for any payout."
   },
   {
-    "question": "Which technologies does Budhana Tech use for web and mobile development?",
-    "expected_answer": "The document identifies React, Node.js, MongoDB, Express.js, and React Native as core technologies."
+    "question": "What happens if a candidate fails background verification?",
+    "expected_answer": "No payout will be made to candidates whose background verification fails at any stage."
   },
   {
-    "question": "What staffing models does Budhana Tech offer?",
-    "expected_answer": "The document describes staff augmentation, dedicated agile engineering pods, and project-driven fixed-scope deliverables."
+    "question": "Which types of leave are eligible for leave encashment?",
+    "expected_answer": "Leave encashment applies only to earned leaves (EL)."
   },
   {
-    "question": "What is Budhana Tech's approach to RAG?",
-    "expected_answer": "The document describes splitting internal documents into chunks, vectorizing them with embedding models, storing them in vector databases, and retrieving relevant reference documents to provide context to an LLM."
+    "question": "When is earned leave encashment processed?",
+    "expected_answer": "Leave encashment is processed in April of the following financial year."
+  },
+  {
+    "question": "How is leave encashment calculated?",
+    "expected_answer": "Leave encashment is calculated based on the employee's basic salary."
+  },
+  {
+    "question": "Are employees paid for unused leaves when they leave the company?",
+    "expected_answer": "Employees exiting the organization are not eligible for any payout against unused leaves."
+  },
+  {
+    "question": "How many earned leaves does an employee earn each month?",
+    "expected_answer": "An employee earns one earned leave (EL) per month, provided they work for the complete month."
+  },
+  {
+    "question": "How far in advance must an employee inform the company to take earned leave?",
+    "expected_answer": "An employee must inform the company at least four days in advance to avail earned leave."
+  },
+  {
+    "question": "How many sick leaves are available to employees each year?",
+    "expected_answer": "Employees become eligible for four sick leaves per year after their confirmation following the probation period."
+  },
+  {
+    "question": "When do earned leaves begin to accumulate according to the sick leave policy section?",
+    "expected_answer": "Earned leaves also begin to accumulate from the month of confirmation."
+  },
+  {
+    "question": "What should an employee do if an emergency prevents them from informing the company about leave?",
+    "expected_answer": "The employee must send an email on the next working day."
+  },
+  {
+    "question": "How many hours must an employee work for a half day?",
+    "expected_answer": "For a half day, employees must serve five hours."
+  },
+  {
+    "question": "When is an employee's relieving letter provided?",
+    "expected_answer": "The relieving letter is provided on the day after the employee's last working day."
+  },
+  {
+    "question": "When is an experience letter issued?",
+    "expected_answer": "An experience letter is issued only after the Full and Final Settlement is completed."
+  },
+  {
+    "question": "Will an employee who works for less than four months receive an experience letter?",
+    "expected_answer": "No. The policy states that an experience letter will not be provided if the employee has worked for less than four months."
+  },
+  {
+    "question": "Will an intern receive an internship letter if they leave before completing the internship?",
+    "expected_answer": "No internship letter will be provided if the candidate leaves the internship before its completion date."
+  },
+  {
+    "question": "When must employees submit their documents for onboarding?",
+    "expected_answer": "All necessary documents must be submitted before onboarding. Failure to do so will delay the onboarding date."
+  },
+  {
+    "question": "Where should employee documents be managed, and how should the folder be named?",
+    "expected_answer": "Employee documents must be managed in the HR mail drive folder, and the folder should be named after the employee."
+  },
+  {
+    "question": "How often are employee increments reviewed?",
+    "expected_answer": "Increments are reviewed and applied annually based on individual performance."
+  },
+  {
+    "question": "When does an increment apply for an employee joining on the 15th of a month?",
+    "expected_answer": "Employees joining on or before the 15th of a month receive the increment in the same month."
+  },
+  {
+    "question": "When does an increment apply for an employee joining after the 15th of a month?",
+    "expected_answer": "Employees joining after the 15th of a month receive the increment from the following month."
+  },
+  {
+    "question": "Does the policy specify the number of casual leaves employees receive each year?",
+    "expected_answer": "The document does not specify the number of casual leaves employees receive each year."
+  },
+  {
+    "question": "Does the policy specify the number of paid holidays employees receive annually?",
+    "expected_answer": "The document does not specify the number of paid holidays employees receive annually."
   }
 ]

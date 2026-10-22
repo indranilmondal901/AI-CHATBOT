@@ -14,6 +14,7 @@ import {
   sendChatMessage,
 } from "./services/api";
 import LangSmithDashboard from "./components/LangSmithDashboard";
+import RagasChart from "./components/RagasChart";
 
 export default function App() {
   const [documents, setDocuments] = useState([]);
@@ -239,6 +240,7 @@ export default function App() {
       <TopBar
         apiOnline={apiOnline}
         onMonitoring={() => setActiveView("monitoring")}
+        StartRagasEvalution={() => setActiveView("ragas")}
       />
 
       {error && (
@@ -252,6 +254,8 @@ export default function App() {
         <LangSmithDashboard
           onClose={() => setActiveView("chat")}
         />
+      ) : activeView === "ragas" ? (
+        <RagasChart onClose={() => setActiveView("chat")} />
       ) : (
         <main className="workspace">
           <DocumentPanel

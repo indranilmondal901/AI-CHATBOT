@@ -83,3 +83,9 @@ export function getLangSmithRunDetail(runId) {
     `/api/monitoring/langsmith/runs/${encodeURIComponent(runId)}`
   );
 }
+
+// RAGAS evaluation analytics
+
+export function getRagasAnalytics() {
+  return request("/api/analytics/ragas");
+}

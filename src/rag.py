@@ -5,7 +5,7 @@ from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # --------------------------------------------------
 # 1. Load environment variables
@@ -40,10 +40,9 @@ vector_store = Chroma(
 # --------------------------------------------------
 
 # llm = ChatOllama(
-#     model="mistral:latest",
+#     model="deepseek-r1:7b",
 #     temperature=0,
 # )
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-3.8-flash",
