@@ -12,3 +12,9 @@ pymupdf
 pydantic
 langchain_ollama
 langchain-google-genai
+ragas
+datasets
+langchain 
+langchain-core 
+langchain-community 
+langchain-google-genai

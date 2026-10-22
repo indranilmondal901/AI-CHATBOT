@@ -1,33 +1,18 @@
-
 [
   {
-    "question": "What technologies does Budhana Tech use?",
-    "expected_answer": "The technologies listed in the approved company documents.",
-    "expected_keywords": ["React", "Node.js"],
-    "should_refuse": false
-  },
-  {
     "question": "What services does Budhana Tech provide?",
-    "expected_answer": "The services documented in the approved company documents.",
-    "expected_keywords": ["software development"],
-    "should_refuse": false
+    "expected_answer": "Budhana Tech specializes in web application development, mobile application development, and advanced AI-based solutions."
   },
   {
-    "question": "What is the developer staffing model?",
-    "expected_answer": "The staffing model described in the approved company documents.",
-    "expected_keywords": ["developers"],
-    "should_refuse": false
+    "question": "Which technologies does Budhana Tech use for web and mobile development?",
+    "expected_answer": "The document identifies React, Node.js, MongoDB, Express.js, and React Native as core technologies."
   },
   {
-    "question": "What is Budhana Tech's revenue forecast for 2030?",
-    "expected_answer": "The knowledge base does not contain this information.",
-    "expected_keywords": [],
-    "should_refuse": true
+    "question": "What staffing models does Budhana Tech offer?",
+    "expected_answer": "The document describes staff augmentation, dedicated agile engineering pods, and project-driven fixed-scope deliverables."
   },
   {
-    "question": "What is the company's policy on a topic not covered in the documents?",
-    "expected_answer": "The knowledge base does not contain this information.",
-    "expected_keywords": [],
-    "should_refuse": true
+    "question": "What is Budhana Tech's approach to RAG?",
+    "expected_answer": "The document describes splitting internal documents into chunks, vectorizing them with embedding models, storing them in vector databases, and retrieving relevant reference documents to provide context to an LLM."
   }
 ]
